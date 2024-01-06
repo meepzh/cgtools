@@ -16,6 +16,7 @@ authors = ["Robert Zhou"]
 
 
 def commands():
+    env.MAYA_SHELF_PATH.append("{root}/shelves/maya")
     env.PYTHONPATH.append("{root}/python")
 
 

@@ -50,3 +50,8 @@ endif()
 
 # Install configuration files
 rez_install_dirs("config" DESTINATION .)
+
+# Install Maya shelves, if applicable
+if(MAYA)
+  rez_install_dirs("shelves" DESTINATION .)
+endif()
