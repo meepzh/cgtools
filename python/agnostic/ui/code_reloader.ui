@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CodeReloaderWidget</class>
+ <widget class="QWidget" name="CodeReloaderWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>275</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Code Reloader</string>
+  </property>
+  <layout class="QVBoxLayout" name="codeReloaderWidgetLayout">
+   <item>
+    <widget class="QPushButton" name="refreshButton">
+     <property name="toolTip">
+      <string>Updates the list of modules available to reload.</string>
+     </property>
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showExternalCheckBox">
+     <property name="toolTip">
+      <string>Turn on to show modules that come from external Rez packages or that are not part of Rez's system (e.g.: DCC and system modules).</string>
+     </property>
+     <property name="text">
+      <string>Show External Packages</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="filterPatternLineEdit">
+     <property name="toolTip">
+      <string>Limits the modules shown below, with support for *, ?, and [...].</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Filter</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListView" name="moduleList">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="toolTip">
+      <string>Select the modules you would like to reload. Select a selected item to deselect it. Right-click for more options.</string>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="reloadButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Reloads the selected modules, not including the modules that have been filtered out.</string>
+     </property>
+     <property name="text">
+      <string>Reload Code</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>refreshButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CodeReloaderWidget</receiver>
+   <slot>refresh()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reloadButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CodeReloaderWidget</receiver>
+   <slot>reload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filterPatternLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>CodeReloaderWidget</receiver>
+   <slot>filterPatternChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showExternalCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>CodeReloaderWidget</receiver>
+   <slot>showExternalPackages(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleList</sender>
+   <signal>customContextMenuRequested(QPoint)</signal>
+   <receiver>CodeReloaderWidget</receiver>
+   <slot>showModuleListContextMenu(QPoint)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>refresh()</slot>
+  <slot>reload()</slot>
+  <slot>filterPatternChanged(QString)</slot>
+  <slot>showExternalPackages(int)</slot>
+  <slot>showModuleListContextMenu(QPoint)</slot>
+ </slots>
+</ui>
