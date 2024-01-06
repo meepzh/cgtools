@@ -35,7 +35,8 @@ def pre_build_commands():
 
 requires = [
     "PySide2-5.12+<6",
-    "python-3.5+",
+    "python-3.10+",
+    "rez-2+",
 ]
 
 

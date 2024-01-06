@@ -47,3 +47,6 @@ if(non_py_files)
   rez_install_files(${non_py_files} RELATIVE "python" DESTINATION
                     ${python_destination})
 endif()
+
+# Install configuration files
+rez_install_dirs("config" DESTINATION .)
