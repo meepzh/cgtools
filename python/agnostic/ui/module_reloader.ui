@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CodeReloaderWidget</class>
- <widget class="QWidget" name="CodeReloaderWidget">
+ <class>ModuleReloaderWidget</class>
+ <widget class="QWidget" name="ModuleReloaderWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,9 +11,9 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Code Reloader</string>
+   <string>Module Reloader</string>
   </property>
-  <layout class="QVBoxLayout" name="codeReloaderWidgetLayout">
+  <layout class="QVBoxLayout" name="moduleReloaderWidgetLayout">
    <item>
     <widget class="QPushButton" name="refreshButton">
      <property name="toolTip">
@@ -69,10 +69,10 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Reloads the selected modules, not including the modules that have been filtered out.</string>
+      <string>Reloads the selected module(s), not including the modules that have been filtered out.</string>
      </property>
      <property name="text">
-      <string>Reload Code</string>
+      <string>Reload Module(s)</string>
      </property>
     </widget>
    </item>
@@ -83,7 +83,7 @@
   <connection>
    <sender>refreshButton</sender>
    <signal>clicked()</signal>
-   <receiver>CodeReloaderWidget</receiver>
+   <receiver>ModuleReloaderWidget</receiver>
    <slot>refresh()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -99,7 +99,7 @@
   <connection>
    <sender>reloadButton</sender>
    <signal>clicked()</signal>
-   <receiver>CodeReloaderWidget</receiver>
+   <receiver>ModuleReloaderWidget</receiver>
    <slot>reload()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -115,7 +115,7 @@
   <connection>
    <sender>filterPatternLineEdit</sender>
    <signal>textChanged(QString)</signal>
-   <receiver>CodeReloaderWidget</receiver>
+   <receiver>ModuleReloaderWidget</receiver>
    <slot>filterPatternChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -131,7 +131,7 @@
   <connection>
    <sender>showExternalCheckBox</sender>
    <signal>stateChanged(int)</signal>
-   <receiver>CodeReloaderWidget</receiver>
+   <receiver>ModuleReloaderWidget</receiver>
    <slot>showExternalPackages(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -147,7 +147,7 @@
   <connection>
    <sender>moduleList</sender>
    <signal>customContextMenuRequested(QPoint)</signal>
-   <receiver>CodeReloaderWidget</receiver>
+   <receiver>ModuleReloaderWidget</receiver>
    <slot>showModuleListContextMenu(QPoint)</slot>
    <hints>
     <hint type="sourcelabel">

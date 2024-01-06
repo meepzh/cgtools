@@ -22,13 +22,13 @@ EXTERNAL_ROLE = QtCore.Qt.UserRole
 logger = logging.getLogger(__name__)
 
 
-class CodeReloaderWidget(QtWidgets.QWidget):
+class ModuleReloaderWidget(QtWidgets.QWidget):
     """Display for modules that can be reloaded in the widget.
 
     Example:
         ::
 
-            widget = cgtools.agnostic.ui.code_reloader.CodeReloaderWidget()
+            widget = cgtools.agnostic.ui.module_reloader.ModuleReloaderWidget()
             widget.show()
     """
 
