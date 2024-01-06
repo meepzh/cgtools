@@ -1,0 +1,23 @@
+{
+  "disable_existing_loggers": false,
+  "formatters": {
+    "colored": {
+      "class": "cgtools.agnostic.colored_log_formatter.ColoredLogFormatter",
+      "format": "%(levelname)s: %(name)s: %(message)s"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "formatter": "colored"
+    }
+  },
+  "loggers": {
+    "root": {
+      "handlers": [
+        "console"
+      ]
+    }
+  },
+  "version": 1
+}
