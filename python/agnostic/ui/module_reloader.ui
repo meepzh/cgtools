@@ -167,5 +167,6 @@
   <slot>filterPatternChanged(QString)</slot>
   <slot>showExternalPackages(int)</slot>
   <slot>showModuleListContextMenu(QPoint)</slot>
+  <slot>toggleUnselectedVisibility()</slot>
  </slots>
 </ui>

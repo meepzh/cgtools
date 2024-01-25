@@ -57,6 +57,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             self.moduleList.selectionModel(),
             parent=self,
         )
+        self.proxyModel.setSelectionModel(self.fullSelectionModel)
 
         # Convenience structure for tracking what has been added or removed from
         # sys.modules
@@ -164,13 +165,31 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             selectAllText = "Select All"
             deselectAllText = "Deselect All"
 
+        if self.proxyModel.unselectedHidden:
+            toggleUnselectedText = "Show Unselected"
+        else:
+            toggleUnselectedText = "Hide Unselected"
+
         selectAllAction = contextMenu.addAction(selectAllText)
         selectAllAction.triggered.connect(self.moduleList.selectAll)
 
         deselectAllAction = contextMenu.addAction(deselectAllText)
         deselectAllAction.triggered.connect(self.moduleList.clearSelection)
 
+        contextMenu.addSeparator()
+
+        toggleUnselectedAction = contextMenu.addAction(toggleUnselectedText)
+        toggleUnselectedAction.triggered.connect(self.toggleUnselectedVisibility)
+
         contextMenu.exec_(self.moduleList.mapToGlobal(pos))
+
+    @QtCore.Slot()
+    def toggleUnselectedVisibility(self):
+        """Toggles whether modules that are not selected should be shown."""
+        hideState = not self.proxyModel.unselectedHidden
+        logger.debug("Toggling unselected modules visibility to %r", not hideState)
+        with self.fullSelectionModel.selectionPreserved():
+            self.proxyModel.hideUnselected(hideState)
 
     def _addModule(self, moduleName: str):
         """Adds the given module to the list of modules.
@@ -239,7 +258,38 @@ class ModuleProxyModel(QtCore.QSortFilterProxyModel):
 
     def __init__(self, parent: QtCore.QObject = None):
         super().__init__(parent=parent)
+        self._hideUnselected = False
+        self._selectionModel = None
         self._showExternal = False
+
+    def setSelectionModel(self, selectionModel: QtCore.QItemSelectionModel):
+        """Sets the selection model to use for filtering unselected items.
+
+        Args:
+            selectionModel: The selection model.
+        """
+        self._selectionModel = selectionModel
+
+    def selectionModel(self) -> QtCore.QItemSelectionModel:
+        """Returns the selection model.
+
+        Providing the selection model through a regular method like this mirrors how
+        ``QAbstractProxyModel`` provides access to the source model with
+        ``sourceModel()``.
+
+        Returns:
+            The selection model.
+        """
+        return self._selectionModel
+
+    @property
+    def unselectedHidden(self) -> bool:
+        """Returns whether unselected items are hidden.
+
+        Returns:
+            Whether unselected items are hidden.
+        """
+        return self._hideUnselected
 
     def filterAcceptsRow(
         self, sourceRow: int, sourceParent: QtCore.QModelIndex
@@ -247,15 +297,28 @@ class ModuleProxyModel(QtCore.QSortFilterProxyModel):
         """Overrides the default behavior when external filtering is enabled and an
         item is marked as external.
         """
-        index = self.sourceModel().index(
-            sourceRow, self.filterKeyColumn(), sourceParent
+        sourceIndex = self.sourceModel().index(
+            sourceRow, self.filterKeyColumn(), parent=sourceParent
         )
+
+        if self._hideUnselected and not self.selectionModel().isSelected(sourceIndex):
+            return False
         if (
-            self.sourceModel().data(index, role=EXTERNAL_ROLE)
+            self.sourceModel().data(sourceIndex, role=EXTERNAL_ROLE)
             and not self._showExternal
         ):
             return False
+
         return super().filterAcceptsRow(sourceRow, sourceParent)
+
+    def hideUnselected(self, on: bool):
+        """Updates whether items that are not selected will be shown.
+
+        Args:
+            on: Whether to hide unselected items.
+        """
+        self._hideUnselected = on
+        self.invalidateFilter()
 
     def showExternalPackages(self, on: bool):
         """Updates whether items marked as external will be shown.
