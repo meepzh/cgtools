@@ -43,6 +43,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
 
         self.sourceModel = QtGui.QStandardItemModel(parent=self)
 
+        # Set up proxy model
         self.proxyModel = ModuleProxyModel(parent=self)
         self.proxyModel.setSourceModel(self.sourceModel)
         self.proxyModel.sort(0)
@@ -67,6 +68,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         self._rezLocations: list[pathlib.Path] = []
         self._cacheRezData()
 
+        # Update UI
         self.filterPatternChanged(self.filterPatternLineEdit.text())
         self.showExternalPackages(self.showExternalCheckBox.checkState())
         self.refresh()
@@ -84,7 +86,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             self.proxyModel.setFilterRegularExpression(
                 QtCore.QRegularExpression.wildcardToRegularExpression(pattern + "*")
             )
-            logger.debug("Changed filter pattern to %r", pattern)
+            logger.debug("Changed filter pattern to %s", pattern)
 
     @QtCore.Slot()
     def refresh(self):
@@ -143,9 +145,9 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         """
         with self.fullSelectionModel.selectionPreserved():
             showState = checkState != QtCore.Qt.Unchecked
+            logger.debug("Showing external packages: %r", showState)
             self.proxyModel.showExternalPackages(showState)
             self.proxyModel.invalidateFilter()
-            logger.debug("Showing external packages: %r", showState)
 
     @QtCore.Slot(QtCore.QPoint)
     def showModuleListContextMenu(self, pos: QtCore.QPoint):
@@ -195,7 +197,6 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         item.setData(isExternal, role=EXTERNAL_ROLE)
 
         self.sourceModel.appendRow(item)
-        logger.debug("Added module '%s' (external: %r)", moduleName, isExternal)
 
     def _cacheRezData(self):
         """Processes the Rez environment and stores package information."""
@@ -326,7 +327,14 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
             deselected: The items being deselected.
         """
         if self._blockUpdates:
+            logger.debug("Blocked selection changes from being mirrored")
             return
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(
+                "Mirroring selection changes: +%d/-%d items",
+                len(selected.indexes()),
+                len(deselected.indexes()),
+            )
 
         selected = self.proxy().mapSelectionToSource(selected)
         deselected = self.proxy().mapSelectionToSource(deselected)
@@ -343,10 +351,21 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
         try:
             self._blockUpdates = True
             yield
-            selection = self.proxy().mapSelectionFromSource(self.selection())
+
+            selection = self.selection()
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug("Re-selecting %d items", len(selection.indexes()))
+
+            selection = self.proxy().mapSelectionFromSource(selection)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(
+                    "Mapped re-selection to %d items", len(selection.indexes())
+                )
+
             self.proxySelectionModel().select(
                 selection, self.SelectionFlag.ClearAndSelect
             )
+
         finally:
             logger.debug("Turning off selection preservation")
             self._blockUpdates = False
