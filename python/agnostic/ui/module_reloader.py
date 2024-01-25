@@ -84,7 +84,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         with self.fullSelectionModel.selectionPreserved():
             pattern += "*"
             self.proxyModel.setFilterRegularExpression(
-                QtCore.QRegularExpression.wildcardToRegularExpression(pattern + "*")
+                QtCore.QRegularExpression.wildcardToRegularExpression(pattern)
             )
             logger.debug("Changed filter pattern to %s", pattern)
 
