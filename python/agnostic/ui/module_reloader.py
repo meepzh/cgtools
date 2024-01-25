@@ -83,10 +83,10 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         """
         with self.fullSelectionModel.selectionPreserved():
             pattern += "*"
+            logger.debug("Changing filter pattern to %s", pattern)
             self.proxyModel.setFilterRegularExpression(
                 QtCore.QRegularExpression.wildcardToRegularExpression(pattern)
             )
-            logger.debug("Changed filter pattern to %s", pattern)
 
     @QtCore.Slot()
     def refresh(self):
@@ -143,9 +143,9 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             checkState: Enable the filtering unless ``QtCore.Qt.Unchecked``
                 (which has a value of 0) is provided.
         """
+        showState = checkState != QtCore.Qt.Unchecked
+        logger.debug("Showing external packages: %r", showState)
         with self.fullSelectionModel.selectionPreserved():
-            showState = checkState != QtCore.Qt.Unchecked
-            logger.debug("Showing external packages: %r", showState)
             self.proxyModel.showExternalPackages(showState)
 
     @QtCore.Slot(QtCore.QPoint)
