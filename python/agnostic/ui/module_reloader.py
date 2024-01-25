@@ -314,21 +314,6 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
         """
         return self._proxySelectionModel
 
-    @contextmanager
-    def selectionPreserved(self):
-        """Prevents selection change signals from modifying this model and reapplies
-        unhidden selections to the proxy model.
-        """
-        try:
-            self._blockUpdates = True
-            yield
-            selection = self.proxy().mapSelectionFromSource(self.selection())
-            self.proxySelectionModel().select(
-                selection, self.SelectionFlag.ClearAndSelect
-            )
-        finally:
-            self._blockUpdates = False
-
     @QtCore.Slot(QtCore.QItemSelection, QtCore.QItemSelection)
     def mirrorSelectionChange(
         self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection
@@ -348,3 +333,20 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
 
         self.select(selected, self.SelectionFlag.Select)
         self.select(deselected, self.SelectionFlag.Deselect)
+
+    @contextmanager
+    def selectionPreserved(self):
+        """Prevents selection change signals from modifying this model and reapplies
+        unhidden selections to the proxy model.
+        """
+        logger.debug("Turning on selection preservation")
+        try:
+            self._blockUpdates = True
+            yield
+            selection = self.proxy().mapSelectionFromSource(self.selection())
+            self.proxySelectionModel().select(
+                selection, self.SelectionFlag.ClearAndSelect
+            )
+        finally:
+            logger.debug("Turning off selection preservation")
+            self._blockUpdates = False
