@@ -147,7 +147,6 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             showState = checkState != QtCore.Qt.Unchecked
             logger.debug("Showing external packages: %r", showState)
             self.proxyModel.showExternalPackages(showState)
-            self.proxyModel.invalidateFilter()
 
     @QtCore.Slot(QtCore.QPoint)
     def showModuleListContextMenu(self, pos: QtCore.QPoint):
@@ -265,6 +264,7 @@ class ModuleProxyModel(QtCore.QSortFilterProxyModel):
             on: Whether to show external items.
         """
         self._showExternal = on
+        self.invalidateFilter()
 
 
 class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
