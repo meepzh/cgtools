@@ -1,5 +1,9 @@
 global proc shelf_cgtools () {
-    global string $gBuffStr;
-    global string $gBuffStr0;
-    global string $gBuffStr1;
-} 
+    shelfButton
+        -annotation "Reloads Python modules without needing to reopen Maya"
+        -imageOverlayLabel "RLD"
+        -image1 "pythonFamily.png"
+        -command "from cgtools.agnostic.ui.module_reloader import ModuleReloaderWidget\nwidget = ModuleReloaderWidget()\nwidget.show()"
+        -sourceType "python"
+    ;
+}
