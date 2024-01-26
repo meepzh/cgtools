@@ -1,6 +1,6 @@
 try:
     from maya_packaging import get_python_version
-except ImportError:
+except ModuleNotFoundError:
     # https://github.com/meepzh/rez-recipes was not installed and directed to by
     # package_definition_build_python_paths. As such, we disable Python compilation,
     # since it's unclear what specific Python version is being used within DCCs.
@@ -30,7 +30,7 @@ def pre_build_commands():
     # Imports are not transferred to the pre_build, so rerun the test
     try:
         import maya_packaging
-    except ImportError:
+    except ModuleNotFoundError:
         env.REZ_BUILD_INSTALL_PYC = 0
 
 
