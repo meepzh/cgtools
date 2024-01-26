@@ -1,5 +1,6 @@
 """Reloads Python modules to aid in development.
 """
+from collections.abc import Iterator
 from contextlib import contextmanager
 import importlib
 import logging
@@ -36,7 +37,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         self,
         parent: QtWidgets.QWidget | None = None,
         f: QtCore.Qt.WindowFlags = QtCore.Qt.WindowFlags(),
-    ):
+    ) -> None:
         super().__init__(parent=parent, f=f)
         loader = ui_loader.UiLoader()
         loader.loadUi(self)
@@ -75,7 +76,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         self.refresh()
 
     @QtCore.Slot(str)
-    def filterPatternChanged(self, pattern: str):
+    def filterPatternChanged(self, pattern: str) -> None:
         """Updates which items are prevented from appearing in the module list.
 
         Args:
@@ -90,7 +91,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             )
 
     @QtCore.Slot()
-    def refresh(self):
+    def refresh(self) -> None:
         """Updates the module list with the modules available for reloading."""
         modules = set(sys.modules)
 
@@ -127,7 +128,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         self._modules = modules
 
     @QtCore.Slot()
-    def reload(self):
+    def reload(self) -> None:
         """Reloads the selected modules."""
         for index in self.moduleList.selectedIndexes():
             index = self.proxyModel.mapToSource(index)
@@ -136,7 +137,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             logger.debug("Reloaded module '%s'", moduleName)
 
     @QtCore.Slot(int)
-    def showExternalPackages(self, checkState: QtCore.Qt.CheckState | int):
+    def showExternalPackages(self, checkState: QtCore.Qt.CheckState | int) -> None:
         """Updates the filter's behavior with regards to external packages as described
         in ``ModuleProxyModel``.
 
@@ -150,7 +151,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             self.proxyModel.showExternalPackages(showState)
 
     @QtCore.Slot(QtCore.QPoint)
-    def showModuleListContextMenu(self, pos: QtCore.QPoint):
+    def showModuleListContextMenu(self, pos: QtCore.QPoint) -> None:
         """Displays a collection of contextual actions pertaining to the module list.
 
         Args:
@@ -184,14 +185,14 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         contextMenu.exec_(self.moduleList.mapToGlobal(pos))
 
     @QtCore.Slot()
-    def toggleUnselectedVisibility(self):
+    def toggleUnselectedVisibility(self) -> None:
         """Toggles whether modules that are not selected should be shown."""
         hideState = not self.proxyModel.unselectedHidden
         logger.debug("Toggling unselected modules visibility to %r", not hideState)
         with self.fullSelectionModel.selectionPreserved():
             self.proxyModel.hideUnselected(hideState)
 
-    def _addModule(self, moduleName: str):
+    def _addModule(self, moduleName: str) -> None:
         """Adds the given module to the list of modules.
 
         Args:
@@ -216,7 +217,7 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
 
         self.sourceModel.appendRow(item)
 
-    def _cacheRezData(self):
+    def _cacheRezData(self) -> None:
         """Processes the Rez environment and stores package information."""
         for variant in rez.status.status.context.resolved_packages:
             location = pathlib.Path(variant.resource.location)
@@ -256,13 +257,13 @@ class ModuleProxyModel(QtCore.QSortFilterProxyModel):
     as the item data role.
     """
 
-    def __init__(self, parent: QtCore.QObject = None):
+    def __init__(self, parent: QtCore.QObject = None) -> None:
         super().__init__(parent=parent)
         self._hideUnselected = False
         self._selectionModel = None
         self._showExternal = False
 
-    def setSelectionModel(self, selectionModel: QtCore.QItemSelectionModel):
+    def setSelectionModel(self, selectionModel: QtCore.QItemSelectionModel) -> None:
         """Sets the selection model to use for filtering unselected items.
 
         Args:
@@ -311,7 +312,7 @@ class ModuleProxyModel(QtCore.QSortFilterProxyModel):
 
         return super().filterAcceptsRow(sourceRow, sourceParent)
 
-    def hideUnselected(self, on: bool):
+    def hideUnselected(self, on: bool) -> None:
         """Updates whether items that are not selected will be shown.
 
         Args:
@@ -320,7 +321,7 @@ class ModuleProxyModel(QtCore.QSortFilterProxyModel):
         self._hideUnselected = on
         self.invalidateFilter()
 
-    def showExternalPackages(self, on: bool):
+    def showExternalPackages(self, on: bool) -> None:
         """Updates whether items marked as external will be shown.
 
         Args:
@@ -347,7 +348,7 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
         proxy: QtCore.QAbstractProxyModel,
         proxySelectionModel: QtCore.QItemSelectionModel,
         parent: QtCore.QObject | None = None,
-    ):
+    ) -> None:
         super().__init__(model, parent=parent)
         self._blockUpdates = False
         self._proxy = proxy
@@ -381,7 +382,7 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
     @QtCore.Slot(QtCore.QItemSelection, QtCore.QItemSelection)
     def mirrorSelectionChange(
         self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection
-    ):
+    ) -> None:
         """Copies the proxy selection changes onto this model when selection changes are
         not blocked.
 
@@ -406,7 +407,7 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
         self.select(deselected, self.SelectionFlag.Deselect)
 
     @contextmanager
-    def selectionPreserved(self):
+    def selectionPreserved(self) -> Iterator[None]:
         """Prevents selection change signals from modifying this model and reapplies
         unhidden selections to the proxy model.
         """

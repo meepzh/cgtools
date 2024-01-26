@@ -61,7 +61,7 @@ class LayeredConfig:
         package: The name of the package.
     """
 
-    def __init__(self, package: str):
+    def __init__(self, package: str) -> None:
         super().__init__()
         self._package = package
 
@@ -107,7 +107,7 @@ class LayeredConfig:
         """
         return self._package
 
-    def _cache_config_dirs(self):
+    def _cache_config_dirs(self) -> None:
         """Searches for any available config directories and stores them in the
         instance.
         """
