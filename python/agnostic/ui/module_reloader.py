@@ -26,11 +26,10 @@ logger = logging.getLogger(__name__)
 class ModuleReloaderWidget(QtWidgets.QWidget):
     """Display for modules that can be reloaded in the widget.
 
-    Example:
-        ::
+    Example::
 
-            widget = cgtools.agnostic.ui.module_reloader.ModuleReloaderWidget()
-            widget.show()
+        widget = cgtools.agnostic.ui.module_reloader.ModuleReloaderWidget()
+        widget.show()
     """
 
     def __init__(

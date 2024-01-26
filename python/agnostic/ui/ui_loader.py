@@ -13,20 +13,19 @@ from PySide2 import (
 class UiLoader(QtUiTools.QUiLoader):
     """Generates the user interface for a widget, as specified by its UI file.
 
-    Example:
-        ::
+    Example::
 
-            from PySide2 import QtWidgets
+        from PySide2 import QtWidgets
 
-            class CustomWidget(QtWidgets.QWidget):
-                pass
+        class CustomWidget(QtWidgets.QWidget):
+            pass
 
-            class TargetWidget(QtWidgets.QWidget):
-                def __init__(self):
-                    super().__init__()
-                    loader = UiLoader()
-                    loader.registerCustomWidget(CustomWidget)
-                    loader.loadUi(self)
+        class TargetWidget(QtWidgets.QWidget):
+            def __init__(self):
+                super().__init__()
+                loader = UiLoader()
+                loader.registerCustomWidget(CustomWidget)
+                loader.loadUi(self)
     """
 
     def __init__(self) -> None:

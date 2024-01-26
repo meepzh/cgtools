@@ -36,11 +36,10 @@ So as an example, configurations may be layered like so:
 * ``$XDG_CONFIG_HOME/cgtools/logging.json`` or ``%APPDATA%\\cgtools\\logging.json``
 * ``$REZ_CGTOOLS_ROOT/config/logging.json``
 
-Configurations may be retrieved like so:
-    ::
+Configurations may be retrieved like so::
 
-        from cgtools.agnostic.layered_config import LayeredConfig
-        config_dict = LayeredConfig("cgtools").get_config("logging")
+    from cgtools.agnostic.layered_config import LayeredConfig
+    config_dict = LayeredConfig("cgtools").get_config("logging")
 """
 import json
 import logging
