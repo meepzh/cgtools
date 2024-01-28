@@ -80,7 +80,7 @@ class LayeredConfig:
         Returns:
             The configuration dictionary.
         """
-        config_sum = {}
+        config_sum: dict[Any, Any] = {}
 
         for config_dir in reversed(self._config_dirs):
             config_path = config_dir.joinpath(f"{name}.json")
@@ -90,7 +90,7 @@ class LayeredConfig:
 
             with config_path.open() as config_file:
                 config = json.load(config_file)
-            config_sum.update(config)
+            _nested_update(config_sum, config)
 
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug("- Loaded %d bytes", config_path.stat().st_size)
@@ -169,3 +169,17 @@ class LayeredConfig:
             return path
 
         return None
+
+
+def _nested_update(base_dict: dict[Any, Any], update_dict: dict[Any, Any]):
+    """Recursively updates dictionaries nested in other dictionaries.
+
+    Args:
+        base_dict: The dictionary with values that may be overwritten.
+        update_dict: The dictionary with values to be written.
+    """
+    for key, value in update_dict.items():
+        if isinstance(base_dict.get(key), dict) and isinstance(value, dict):
+            _nested_update(base_dict[key], value)
+        else:
+            base_dict[key] = value

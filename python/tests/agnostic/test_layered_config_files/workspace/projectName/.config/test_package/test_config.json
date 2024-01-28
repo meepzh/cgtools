@@ -1,0 +1,12 @@
+{
+  "layer": {
+    "project": "project",
+    "project_overrides_package": "project_overrides_package",
+    "project_overrides_workspace": "project_overrides_workspace",
+    "user_overrides_project": "fail"
+  },
+  "project": "project",
+  "project_overrides_package": "project_overrides_package",
+  "project_overrides_workspace": "project_overrides_workspace",
+  "user_overrides_project": "fail"
+}

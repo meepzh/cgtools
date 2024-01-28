@@ -12,4 +12,4 @@ logging.config.dictConfig(config)
 logger = logging.getLogger(__name__)
 env_level = os.getenv("CGTOOLS_LOG_LEVEL")
 if env_level:
-    logger.setLevel(env_level)
+    logger.setLevel(env_level.upper())

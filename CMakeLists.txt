@@ -44,6 +44,35 @@ if(non_py_files)
   rez_install_files(${non_py_files} DESTINATION .)
 endif()
 
+# Prepare and install Python test files
+file(GLOB_RECURSE py_test_files "python/tests/*.py")
+if(NOT MAYA)
+  list(FILTER py_test_files EXCLUDE REGEX ${maya_regex})
+endif()
+# rez_install_python hardcodes the executable name, so use install_python
+# directly
+install_python(
+  py_test
+  FILES
+  ${py_test_files}
+  RELATIVE
+  "python/tests"
+  BIN
+  ${PYTHON_EXE}
+  DESTINATION
+  "tests/python")
+
+# Prepare and install other Python test-related files
+file(GLOB_RECURSE non_py_test_files "python/tests/*")
+list(FILTER non_py_test_files EXCLUDE REGEX "\\.py$")
+if(NOT MAYA)
+  list(FILTER non_py_test_files EXCLUDE REGEX ${maya_regex})
+endif()
+if(non_py_test_files)
+  rez_install_files(${non_py_test_files} RELATIVE "python/tests" DESTINATION
+                    "tests/python")
+endif()
+
 # Install configuration files
 rez_install_dirs("config" DESTINATION .)
 

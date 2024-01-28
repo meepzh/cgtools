@@ -41,6 +41,14 @@ requires = [
 ]
 
 
+tests = {
+    "unit_python": (
+        "${PYTHON_EXE} -m unittest discover --catch "
+        "--start-directory {root}/tests/python"
+    )
+}
+
+
 uuid = "33f93d29427d4d72ade889c2fd5f7ef6"
 
 

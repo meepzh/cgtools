@@ -1,0 +1,12 @@
+{
+  "layer": {
+    "package": "package",
+    "project_overrides_package": "fail",
+    "user_overrides_package": "fail",
+    "workspace_overrides_package": "fail"
+  },
+  "package": "package",
+  "project_overrides_package": "fail",
+  "user_overrides_package": "fail",
+  "workspace_overrides_package": "fail"
+}
