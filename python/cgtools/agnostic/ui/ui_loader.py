@@ -1,5 +1,4 @@
-"""Customize PySide UI loading behavior.
-"""
+"""Customize PySide UI loading behavior."""
 import pathlib
 import sys
 

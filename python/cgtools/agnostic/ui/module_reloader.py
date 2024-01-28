@@ -1,5 +1,4 @@
-"""Reloads Python modules to aid in development.
-"""
+"""Reloads Python modules to aid in development."""
 from collections.abc import Iterator
 from contextlib import contextmanager
 import importlib
