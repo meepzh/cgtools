@@ -90,7 +90,7 @@ class LayeredConfig:
 
             with config_path.open() as config_file:
                 config = json.load(config_file)
-            _nested_update(config_sum, config)
+            self._nested_update(config_sum, config)
 
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug("- Loaded %d bytes", config_path.stat().st_size)
@@ -170,16 +170,16 @@ class LayeredConfig:
 
         return None
 
+    @classmethod
+    def _nested_update(cls, base_dict: dict[Any, Any], update_dict: dict[Any, Any]):
+        """Recursively updates dictionaries nested in other dictionaries.
 
-def _nested_update(base_dict: dict[Any, Any], update_dict: dict[Any, Any]):
-    """Recursively updates dictionaries nested in other dictionaries.
-
-    Args:
-        base_dict: The dictionary with values that may be overwritten.
-        update_dict: The dictionary with values to be written.
-    """
-    for key, value in update_dict.items():
-        if isinstance(base_dict.get(key), dict) and isinstance(value, dict):
-            _nested_update(base_dict[key], value)
-        else:
-            base_dict[key] = value
+        Args:
+            base_dict: The dictionary with values that may be overwritten.
+            update_dict: The dictionary with values to be written.
+        """
+        for key, value in update_dict.items():
+            if isinstance(base_dict.get(key), dict) and isinstance(value, dict):
+                cls._nested_update(base_dict[key], value)
+            else:
+                base_dict[key] = value
