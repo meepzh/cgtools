@@ -57,6 +57,9 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
             parent=self,
         )
         self.proxyModel.setSelectionModel(self.fullSelectionModel)
+        self.moduleList.selectionModel().selectionChanged.connect(
+            self.updateSelectionFilter
+        )
 
         # Convenience structure for tracking what has been added or removed from
         # sys.modules
@@ -171,16 +174,19 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
 
         selectAllAction = contextMenu.addAction(selectAllText)
         selectAllAction.triggered.connect(self.moduleList.selectAll)
+        selectAllAction.setObjectName("selectAllAction")
 
         deselectAllAction = contextMenu.addAction(deselectAllText)
         deselectAllAction.triggered.connect(self.moduleList.clearSelection)
+        deselectAllAction.setObjectName("deselectAllAction")
 
         contextMenu.addSeparator()
 
         toggleUnselectedAction = contextMenu.addAction(toggleUnselectedText)
         toggleUnselectedAction.triggered.connect(self.toggleUnselectedVisibility)
+        toggleUnselectedAction.setObjectName("toggleUnselectedAction")
 
-        contextMenu.exec_(self.moduleList.mapToGlobal(pos))
+        contextMenu.popup(self.moduleList.mapToGlobal(pos))
 
     @QtCore.Slot()
     def toggleUnselectedVisibility(self) -> None:
@@ -189,6 +195,21 @@ class ModuleReloaderWidget(QtWidgets.QWidget):
         logger.debug("Toggling unselected modules visibility to %r", not hideState)
         with self.fullSelectionModel.selectionPreserved():
             self.proxyModel.hideUnselected(hideState)
+
+    @QtCore.Slot(QtCore.QItemSelection, QtCore.QItemSelection)
+    def updateSelectionFilter(
+        self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection
+    ) -> None:
+        """Updates the full selection model with the user's selection changes. If
+        appropriate, this also triggers the proxy to update the filter.
+
+        Args:
+            selected: The items being selected.
+            deselected: The items being deselected.
+        """
+        self.fullSelectionModel.mirrorSelectionChange(selected, deselected)
+        if self.proxyModel.unselectedHidden:
+            self.proxyModel.invalidateFilter()
 
     def _addModule(self, moduleName: str) -> None:
         """Adds the given module to the list of modules.
@@ -351,8 +372,6 @@ class ReverseProxySelectionModel(QtCore.QItemSelectionModel):
         self._blockUpdates = False
         self._proxy = proxy
         self._proxySelectionModel = proxySelectionModel
-
-        self.proxySelectionModel().selectionChanged.connect(self.mirrorSelectionChange)
 
     def proxy(self) -> QtCore.QAbstractProxyModel:
         """Returns the stored proxy model.

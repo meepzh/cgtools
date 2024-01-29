@@ -168,5 +168,6 @@
   <slot>showExternalPackages(int)</slot>
   <slot>showModuleListContextMenu(QPoint)</slot>
   <slot>toggleUnselectedVisibility()</slot>
+  <slot>updateSelectionFilter(QItemSelection,QItemSelection)</slot>
  </slots>
 </ui>
