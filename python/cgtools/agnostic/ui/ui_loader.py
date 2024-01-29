@@ -58,7 +58,7 @@ class UiLoader(QtUiTools.QUiLoader):
             The widget generated from the UI file.
         """
         if not uiPathStr:
-            targetModule = sys.modules[target.__class__.__module__]
+            targetModule = sys.modules[type(target).__module__]
             uiPath = pathlib.Path(str(targetModule.__file__))
             uiPath = uiPath.resolve().with_suffix(".ui")
             uiPathStr = str(uiPath)

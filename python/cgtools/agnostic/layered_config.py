@@ -69,7 +69,7 @@ class LayeredConfig:
         self._cache_config_dirs()
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}('{self.package}')"
+        return f"{type(self).__name__}('{self.package}')"
 
     def get_config(self, name: str) -> dict[Any, Any]:
         """Retrieves the package configuration of the specified name.
