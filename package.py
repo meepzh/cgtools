@@ -42,10 +42,20 @@ requires = [
 
 
 tests = {
-    "unit_python": (
-        "${PYTHON_EXE} -m unittest discover --catch "
-        "--start-directory {root}/tests/python"
-    )
+    "unit_python": {
+        "command": (
+            "${PYTHON_EXE} -m unittest discover --catch "
+            "--start-directory {root}/tests/python/agnostic"
+        ),
+        "on_variants": True,
+    },
+    "unit_python_maya": {
+        "command": (
+            "${PYTHON_EXE} {root}/tests/python/maya/maya_test.py discover --catch "
+            "--start-directory {root}/tests/python/maya"
+        ),
+        "on_variants": {"type": "requires", "value": ["maya"]},
+    },
 }
 
 
