@@ -1,5 +1,15 @@
 global proc shelf_cgtools () {
     shelfButton
+        -annotation "Temporarily splits a mesh based on the current selection so that whole parts can be flood selected"
+        -imageOverlayLabel "FSEL"
+        -image1 "pythonFamily.png"
+        -command "from cgtools.maya.ui.fill_selection import fillSelection\nfillSelection()"
+        -sourceType "python"
+    ;
+
+    addShelfSeparator();
+
+    shelfButton
         -annotation "Reloads Python modules without needing to reopen Maya"
         -imageOverlayLabel "RLD"
         -image1 "pythonFamily.png"
