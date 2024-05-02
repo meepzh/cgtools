@@ -13,7 +13,7 @@ global proc shelf_cgtools () {
         -label "Sort Selected"
         -imageOverlayLabel "SORT"
         -image1 "pythonFamily.png"
-        -command "selection = cmds.ls(selection=True)\nfor selected in sorted(selection, key=lambda selected: selected.rpartition('|')[2]):\n    cmds.reorder(selected, back=True)"
+        -command "selection = cmds.ls(selection=True)\nkeys = []\nfor selected in selection:\n    selected = selected.rpartition(\"|\")[2]\n    key = selected.rstrip(\"0123456789\")\n    key += selected[len(key):].zfill(12)\n    keys.append(key)\nfor _, selected in sorted(zip(keys, selection)):\n    cmds.reorder(selected, back=True)"
         -sourceType "python"
         -menuItem "Sort by Y (center)" ("selection = cmds.ls(selection=True)\nfor selected in sorted(selection, key=lambda selected: -cmds.objectCenter(selected, y=True)):\n    cmds.reorder(selected, back=True)")
         -menuItemPython 0
