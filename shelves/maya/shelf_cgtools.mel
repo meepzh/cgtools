@@ -21,6 +21,15 @@ global proc shelf_cgtools () {
         -menuItemPython 1
     ;
 
+    shelfButton
+        -annotation "Renames the selected items"
+        -label "Rename Selected"
+        -imageOverlayLabel "REN"
+        -image1 "pythonFamily.png"
+        -command "from PySide2.QtWidgets import QInputDialog\nnewName, ok = QInputDialog.getText(None, \"Rename To...\", \"New Name:\")\nif ok:\n    for selected in cmds.ls(selection=True):\n        cmds.rename(selected, newName)"
+        -sourceType "python"
+    ;
+
     addShelfSeparator();
 
     shelfButton
