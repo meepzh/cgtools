@@ -28,6 +28,7 @@ from cgtools.maya.config_enum import (
     ConfigEnum,
     ConfigVar,
 )
+from cgtools.maya.undo import undoChunk
 
 
 logger = logging.getLogger(__name__)
@@ -227,6 +228,7 @@ def fillSelection() -> None:
     _startSession()
 
 
+@undoChunk("Convert the fill selection")
 def finalize() -> None:
     """Converts the selection and cleans up the session."""
     selection = cmds.ls(selection=True)
@@ -281,6 +283,7 @@ def _changeSelectType(
         cmds.hilite(transforms)
 
 
+@undoChunk("Clean up changes from fill selection")
 def _cleanUp() -> None:
     """Removes any extra nodes created on the affected shapes. This does not clear
     session data.
@@ -518,6 +521,7 @@ def _prepareUVSets(shapes: Collection[str]) -> tuple[list[str], list[str]]:
     return (previousUVSets, workingUVSets)
 
 
+@undoChunk("Prepare the scene for fill selection")
 def _restoreSession() -> None:
     """Reapplies the session data to a clean scene."""
     logger.debug("Restoring session")
