@@ -1,14 +1,3 @@
-try:
-    from maya_packaging import get_python_version
-except ModuleNotFoundError:
-    # https://github.com/meepzh/rez-recipes was not installed and directed to by
-    # package_definition_build_python_paths. As such, we disable Python compilation,
-    # since it's unclear what specific Python version is being used within DCCs.
-    __python_version = None
-else:
-    __python_version = get_python_version()
-
-
 name = "cgtools"
 
 
@@ -35,7 +24,6 @@ def pre_build_commands():
 
 
 requires = [
-    "PySide2-5.12+<6",
     "python-3.10+",
     "rez-2+",
 ]
@@ -62,19 +50,12 @@ tests = {
 uuid = "33f93d29427d4d72ade889c2fd5f7ef6"
 
 
-@early()
-def variants():
-    if __python_version:
-        variants = [
-            ["!maya", "python-*.*"],
-            ["maya", f"python-{this.__python_version.rpartition('.')[0]}"],
-        ]
-    else:
-        variants = [
-            ["!maya"],
-            ["maya"],
-        ]
-    return variants
+variants = [
+    ["!maya", "PySide2-5.12+<6", "python-*.*"],
+    ["!maya", "PySide-6", "python-*.*"],
+    ["maya-2024", "PySide2-5.12+<6", "python-3.10"],
+    ["maya-2025", "PySide-6", "python-3.11"],
+]
 
 
 version = "1.0.0"

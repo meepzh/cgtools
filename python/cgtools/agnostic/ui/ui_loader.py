@@ -2,11 +2,18 @@
 import pathlib
 import sys
 
-from PySide2 import (
-    QtCore,
-    QtUiTools,
-    QtWidgets,
-)
+try:
+    from PySide6 import (
+        QtCore,
+        QtUiTools,
+        QtWidgets,
+    )
+except ImportError:
+    from PySide2 import (
+        QtCore,
+        QtUiTools,
+        QtWidgets,
+    )
 
 
 class UiLoader(QtUiTools.QUiLoader):
