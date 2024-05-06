@@ -36,11 +36,11 @@ install_python(
 
 # Prepare and install ui files
 file(GLOB_RECURSE ui_files "python/${REZ_BUILD_PROJECT_NAME}/*.ui")
+set(uic_dest "${CMAKE_BINARY_DIR}/uic")
+cmake_path(RELATIVE_PATH uic_dest OUTPUT_VARIABLE uic_subpath)
 foreach(ui_file ${ui_files})
   # Prepare the destination path
   cmake_path(RELATIVE_PATH ui_file OUTPUT_VARIABLE ui_subpath)
-  set(uic_dest "${CMAKE_BINARY_DIR}/uic")
-  cmake_path(RELATIVE_PATH uic_dest OUTPUT_VARIABLE uic_subpath)
   set(uic_file "${uic_dest}/${ui_subpath}")
   string(REGEX REPLACE "\\.ui$" "_ui.py" uic_file ${uic_file})
   cmake_path(GET uic_file PARENT_PATH uic_dir)
@@ -49,20 +49,20 @@ foreach(ui_file ${ui_files})
   # Convert to Python
   execute_process(COMMAND uic --generator python --output ${uic_file}
                           ${ui_file})
-
-  # rez_install_python hardcodes the executable name, so use install_python
-  # directly
-  install_python(
-    ui_py
-    FILES
-    ${uic_file}
-    RELATIVE
-    ${uic_subpath}
-    BIN
-    ${PYTHON_EXE}
-    DESTINATION
-    .)
 endforeach()
+file(GLOB_RECURSE uic_files "${uic_dest}/*.py")
+# rez_install_python hardcodes the executable name, so use install_python
+# directly
+install_python(
+  uic_py
+  FILES
+  ${uic_files}
+  RELATIVE
+  ${uic_subpath}
+  BIN
+  ${PYTHON_EXE}
+  DESTINATION
+  .)
 
 # Prepare and install other Python-related files
 file(GLOB_RECURSE non_py_files "python/${REZ_BUILD_PROJECT_NAME}/*")
