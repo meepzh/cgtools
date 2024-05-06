@@ -555,31 +555,90 @@ def _startSession() -> None:
                 "Support for finalizing the fill selection using the enter key has not "
                 "been added yet."
             )
+
         case ExitOn.SELECTION:
-            jobNumbers.append(cmds.scriptJob(event=("SelectionChanged", finalize)))
+
+            def finalizeAfterSelectionChanged() -> None:
+                """Finalizes the fill selection process after a selection change."""
+                logger.debug("Finalize due to selection change")
+                finalize()
+
+            jobNumbers.append(
+                cmds.scriptJob(
+                    event=("SelectionChanged", finalizeAfterSelectionChanged)
+                )
+            )
 
     # Account for changes away from the current selection mode or type
     if Config.EXIT_ON_SELECT_MODETYPE_CHANGE.getValue():
-        jobNumbers.append(cmds.scriptJob(event=("SelectModeChanged", finalize)))
-        jobNumbers.append(cmds.scriptJob(event=("SelectTypeChanged", finalize)))
+
+        def finalizeAfterSelectModeChanged() -> None:
+            """Finalizes the fill selection process after a select mode change."""
+            logger.debug("Finalize due to select mode change")
+            finalize()
+
+        jobNumbers.append(
+            cmds.scriptJob(event=("SelectModeChanged", finalizeAfterSelectModeChanged))
+        )
+
+        def finalizeAfterSelectTypeChanged() -> None:
+            """Finalizes the fill selection process after a select type change."""
+            logger.debug("Finalize due to select type change")
+            finalize()
+
+        jobNumbers.append(
+            cmds.scriptJob(event=("SelectTypeChanged", finalizeAfterSelectTypeChanged))
+        )
 
     # Tool changes can affect construction history, so be sure to exit there
-    jobNumbers.append(cmds.scriptJob(event=("ToolChanged", finalize)))
+    def finalizeAfterToolChanged() -> None:
+        """Finalizes the fill selection process after a tool change."""
+        logger.debug("Finalize due to tool change")
+        finalize()
+
+    jobNumbers.append(cmds.scriptJob(event=("ToolChanged", finalizeAfterToolChanged)))
 
     # Account for scene changes
+    def cleanUpBeforeSave(_clientData: None) -> None:
+        """Cleans up the scene changes that only make sense in the tool's context.
+
+        Args:
+            _clientData: There is no client data being passed to this callback.
+        """
+        logger.debug("Cleaning up before save")
+        _cleanUp()
+
+    callbackIDs.append(
+        om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeSave, cleanUpBeforeSave)
+    )
+
+    def restoreSessionAfterSave(_clientData: None) -> None:
+        """Restores the scene changes to return to the tool's context.
+
+        Args:
+            _clientData: There is no client data being passed to this callback.
+        """
+        logger.debug("Restoring session after save")
+        _restoreSession()
+
     callbackIDs.append(
         om.MSceneMessage.addCallback(
-            om.MSceneMessage.kBeforeSave, lambda _clientData: _cleanUp()
+            om.MSceneMessage.kAfterSave, restoreSessionAfterSave
         )
     )
+
+    def clearSessionAfterNewScene(_clientData: None) -> None:
+        """Removes the session due to the new scene.
+
+        Args:
+            _clientData: There is no client data being passed to this callback.
+        """
+        logger.debug("Clearing session after new scene")
+        _sessionData.clear()
+
     callbackIDs.append(
         om.MSceneMessage.addCallback(
-            om.MSceneMessage.kAfterSave, lambda _clientData: _restoreSession()
-        )
-    )
-    callbackIDs.append(
-        om.MSceneMessage.addCallback(
-            om.MSceneMessage.kAfterNew, lambda _clientData: _sessionData.clear()
+            om.MSceneMessage.kAfterNew, clearSessionAfterNewScene
         )
     )
 
