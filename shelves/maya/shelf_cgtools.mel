@@ -26,7 +26,7 @@ global proc shelf_cgtools () {
         -label "Rename Selected"
         -imageOverlayLabel "REN"
         -image1 "pythonFamily.png"
-        -command "from PySide2.QtWidgets import QInputDialog\nnewName, ok = QInputDialog.getText(None, \"Rename To...\", \"New Name:\")\nif ok:\n    for selected in cmds.ls(selection=True):\n        cmds.rename(selected, newName)"
+        -command "result = cmds.promptDialog(title='Rename To...', message='New Name:', button=['OK', 'Cancel'], defaultButton='OK', cancelButton='Cancel', dismissString='Cancel')\nif result == 'OK':\n    newName = cmds.promptDialog(query=True, text=True)\n    for selected in cmds.ls(selection=True):\n        cmds.rename(selected, newName)"
         -sourceType "python"
     ;
 
